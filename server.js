@@ -1,3 +1,5 @@
+'use-strict';
+
 const express = require('express');
 // you'll need to use `queryString` in your `gateKeeper` middleware function
 const queryString = require('query-string');
@@ -65,8 +67,25 @@ const USERS = [
 //     (aka, `req.user = matchedUser`)
 function gateKeeper(req, res, next) {
   // your code should replace the line below
+  console.log("running middleware");
+  console.log(req.url);
+  
+  
+  const parsedHeader = queryString.parse(req.get('x-username-and-password'));
+  
+  const {user, pass} = Object.assign({user: null, pass: null}, parsedHeader);
+   
+  console.log(parsedHeader);
+  console.log(user);
+  console.log(pass);
+  
+  req.user = USERS.find((usr, index) => usr.userName === user && usr.password === pass);
+  console.log(req.user);
+  
   next();
 }
+
+app.use(gateKeeper);
 
 // Add the middleware to your app!
 
